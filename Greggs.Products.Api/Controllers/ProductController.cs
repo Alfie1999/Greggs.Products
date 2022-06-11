@@ -1,40 +1,62 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Greggs.Products.Api.Business;
+using Greggs.Products.Api.JWT;
 using Greggs.Products.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Greggs.Products.Api.Controllers;
-
+[Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)] 
 [ApiController]
 [Route("[controller]")]
 public class ProductController : ControllerBase
 {
-    private static readonly string[] Products = new[]
-    {
-        "Sausage Roll", "Vegan Sausage Roll", "Steak Bake", "Yum Yum", "Pink Jammie"
-    };
 
-    private readonly ILogger<ProductController> _logger;
 
-    public ProductController(ILogger<ProductController> logger)
-    {
-        _logger = logger;
-    }
+  private readonly ILogger<ProductController> _logger;
+  private readonly IProductService _productService;
+  private readonly ProductExchangeRate _productExchangeRate;
 
-    [HttpGet]
-    public IEnumerable<Product> Get(int pageStart = 0, int pageSize = 5)
-    {
-        if (pageSize > Products.Length)
-            pageSize = Products.Length;
 
-        var rng = new Random();
-        return Enumerable.Range(1, pageSize).Select(index => new Product
-            {
-                PriceInPounds = rng.Next(0, 10),
-                Name = Products[rng.Next(Products.Length)]
-            })
-            .ToArray();
-    }
+  public ProductController(IProductService productService,
+    IOptions<ProductExchangeRate> options, ILogger<ProductController> logger)
+  {
+    _productService = productService;
+    _productExchangeRate = options.Value;
+    _logger = logger;
+
+  }
+  /// <summary>
+  /// Get Product list
+  /// </summary>
+  /// <param name="pageStart"></param>
+  /// <param name="pageSize"></param>
+  /// <returns></returns>
+  [HttpGet]
+  [AllowAnonymous]
+  public async Task<ActionResult<IEnumerable<Product>>> Get(int pageStart = 0, int pageSize = 5) 
+  {
+    var items = await _productService.ProductList(pageStart, pageSize);
+    _logger.LogInformation("ProductController Get called");
+    return Ok(items);
+  }
+
+ /// <summary>
+ /// Get Product Prices in Euros
+ /// </summary>
+ /// <param name="pageStart"></param>
+ /// <param name="pageSize"></param>
+ /// <returns></returns>
+  [HttpGet("GetProductPrices")]
+  public async Task<ActionResult<IEnumerable<ProductPrice>>> GetProductPrices(int pageStart = 0, int pageSize = 5)
+  {
+
+    var items = await _productService.ProductPiceList(_productExchangeRate, pageStart, pageSize);
+    return Ok(items);
+  }
+
+
 }

@@ -1,6 +1,7 @@
+using Greggs.Products.Api.Models;
 using System.Collections.Generic;
 using System.Linq;
-using Greggs.Products.Api.Models;
+using System.Threading.Tasks;
 
 namespace Greggs.Products.Api.DataAccess;
 
@@ -9,7 +10,7 @@ namespace Greggs.Products.Api.DataAccess;
 /// </summary>
 public class ProductAccess : IDataAccess<Product>
 {
-    private static readonly IEnumerable<Product> ProductDatabase = new List<Product>()
+  private static readonly IEnumerable<Product> ProductDatabase = new List<Product>()
     {
         new() { Name = "Sausage Roll", PriceInPounds = 1m },
         new() { Name = "Vegan Sausage Roll", PriceInPounds = 1.1m },
@@ -20,17 +21,30 @@ public class ProductAccess : IDataAccess<Product>
         new() { Name = "Bacon Sandwich", PriceInPounds = 1.95m },
         new() { Name = "Coca Cola", PriceInPounds = 1.2m }
     };
+  /// <summary>
+  ///  DISCLAIMER: doesn't really need to be async
+  /// </summary>
+  /// <param name="pageStart"></param>
+  /// <param name="pageSize"></param>
+  /// <returns></returns>
+  public async Task<IEnumerable<Product>> List(int? pageStart, int? pageSize)
+  {
+    var queryable = ProductDatabase.AsQueryable();
 
-    public IEnumerable<Product> List(int? pageStart, int? pageSize)
+    if (pageStart.HasValue)
     {
-        var queryable = ProductDatabase.AsQueryable();
-
-        if (pageStart.HasValue)
-            queryable = queryable.Skip(pageStart.Value);
-
-        if (pageSize.HasValue)
-            queryable = queryable.Take(pageSize.Value);
-
-        return queryable.ToList();
+      queryable = queryable.Skip(pageStart.Value);
     }
+
+
+    if (pageSize.HasValue)
+    {
+      queryable = queryable.Take(pageSize.Value);
+    }
+
+
+    return await Task.Run(() => queryable.ToList());
+  }
+
+
 }

@@ -1,8 +1,10 @@
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Greggs.Products.Api.DataAccess;
 
-public interface IDataAccess<out T>
+public interface IDataAccess<T> where T : class
 {
-    IEnumerable<T> List(int? pageStart, int? pageSize);
+  Task<IEnumerable<T>> List(int? pageStart, int? pageSize);
 }
