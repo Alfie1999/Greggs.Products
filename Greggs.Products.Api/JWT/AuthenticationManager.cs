@@ -27,7 +27,12 @@ public class JwtAuthenticationManager : IJwtAuthenticationManager
   {
     _key = key;
   }
-
+  /// <summary>
+  /// Authenticate user and return a token on success
+  /// </summary>
+  /// <param name="username"></param>
+  /// <param name="password"></param>
+  /// <returns></returns>
   public string Authenticate(string username, string password)
   {
     if (!_users.Any(u => u.Key == username && u.Value == password))

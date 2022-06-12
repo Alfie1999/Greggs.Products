@@ -7,5 +7,5 @@ namespace Greggs.Products.Api.Business;
 public interface IProductService
 {
   Task<IEnumerable<Product>> ProductList(int? pageStart, int? pageSize);
-  Task<IEnumerable<Product>> ProductPiceList(ProductExchangeRate productExchangeRate, int? pageStart, int? pageSize);
+  Task<IEnumerable<ProductPrice>> ProductPiceList(ProductExchangeRate productExchangeRate, int? pageStart, int? pageSize);
 }
