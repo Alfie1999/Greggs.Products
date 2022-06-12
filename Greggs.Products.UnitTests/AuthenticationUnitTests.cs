@@ -35,7 +35,7 @@ public class AuthenticationUnitTests
     //Arrange
     var username = "test1";
     var password = "password";
-    var key =  new string('*', keyLength); ;
+    var key = new string('*', keyLength); ;
 
     //Act
     var authenticate = new JwtAuthenticationManager(key);

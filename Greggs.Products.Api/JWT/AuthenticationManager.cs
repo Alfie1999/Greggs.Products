@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -20,10 +19,10 @@ public class JwtAuthenticationManager : IJwtAuthenticationManager
   /// DISCLAIMER: users - This is only here to help enable the purpose of this exercise, this doesn't reflect the way we work!
   /// logging can also be improved
   /// </summary>
-  private readonly IDictionary<string, string> users = new Dictionary<string, string>
+  private readonly IDictionary<string, string> _users = new Dictionary<string, string>
   {
-{"test1", "password" }, {"test2", "password2" }
-};
+    {"test1", "password" }, {"test2", "password2" }
+  };
   public JwtAuthenticationManager(string key)
   {
     _key = key;
@@ -31,7 +30,7 @@ public class JwtAuthenticationManager : IJwtAuthenticationManager
 
   public string Authenticate(string username, string password)
   {
-    if (!users.Any(u => u.Key == username && u.Value == password))
+    if (!_users.Any(u => u.Key == username && u.Value == password))
     {
       Log.Warning("username and or password not found");
       return null;
@@ -69,7 +68,6 @@ public class JwtAuthenticationManager : IJwtAuthenticationManager
       Log.Error("JWT token Exception {ex}", ex.ToString());
       throw;
     }
-
 
   }
 }

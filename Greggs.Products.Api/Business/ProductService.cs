@@ -33,10 +33,12 @@ public class ProductService : IProductService
     var productList = await Task.Run(() => _productAccess.List(pageStart, pageSize));
     foreach (var record in productList)
     {
-      priceList.Add(new ProductPrice 
-      { Name = record.Name, 
-        PriceInPounds = record.PriceInPounds, 
-        PriceInEuros = (record.PriceInPounds * productExchangeRate.Euros) });
+      priceList.Add(new ProductPrice
+      {
+        Name = record.Name,
+        PriceInPounds = record.PriceInPounds,
+        PriceInEuros = (record.PriceInPounds * productExchangeRate.Euros)
+      });
     }
     return priceList;
   }

@@ -1,5 +1,4 @@
 ﻿using Greggs.Products.Api.Business;
-using Greggs.Products.Api.JWT;
 using Greggs.Products.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,13 +8,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Greggs.Products.Api.Controllers;
-[Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)] 
+[Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
 [Route("[controller]")]
 public class ProductController : ControllerBase
 {
-
-
   private readonly ILogger<ProductController> _logger;
   private readonly IProductService _productService;
   private readonly ProductExchangeRate _productExchangeRate;
@@ -37,19 +34,19 @@ public class ProductController : ControllerBase
   /// <returns></returns>
   [HttpGet]
   [AllowAnonymous]
-  public async Task<ActionResult<IEnumerable<Product>>> Get(int pageStart = 0, int pageSize = 5) 
+  public async Task<ActionResult<IEnumerable<Product>>> Get(int pageStart = 0, int pageSize = 5)
   {
     var items = await _productService.ProductList(pageStart, pageSize);
     _logger.LogInformation("ProductController Get called");
     return Ok(items);
   }
 
- /// <summary>
- /// Get Product Prices in Euros
- /// </summary>
- /// <param name="pageStart"></param>
- /// <param name="pageSize"></param>
- /// <returns></returns>
+  /// <summary>
+  /// Get Product Prices in Euros
+  /// </summary>
+  /// <param name="pageStart"></param>
+  /// <param name="pageSize"></param>
+  /// <returns></returns>
   [HttpGet("GetProductPrices")]
   public async Task<ActionResult<IEnumerable<ProductPrice>>> GetProductPrices(int pageStart = 0, int pageSize = 5)
   {
